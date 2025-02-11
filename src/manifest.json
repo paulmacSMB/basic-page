@@ -1,33 +1,23 @@
 {
-    "manifest_version": 1,
-    "name": "Basic-Page",
-    "description": "A webpage mask to simplify webpages",
-    "version": "1.0",
-    "icons": {
-      "16": "assets/icons/icon16.png",
-      "48": "assets/icons/icon48.png",
-      "128": "assets/icons/icon128.png"
-    },
-    "action": {
-      "default_popup": "index.html",
-      "default_icon": {
-        "16": "assets/icons/icon16.png",
-        "48": "assets/icons/icon48.png",
-        "128": "assets/icons/icon128.png"
-      }
-    },
-    "permissions": [
-      "activeTab",
-      "storage"
-    ],
-    "background": {
-      "service_worker": "background.js"
-    },
-    "content_scripts": [
-      {
-        "matches": ["<all_urls>"],
-        "js": ["content-script.js"]
-      }
-    ]
-  }
-  
+  "manifest_version": 3,
+  "name": "Basic-Page",
+  "description": "A webpage mask to simplify webpages",
+  "version": "1.0",
+  "action": {
+    "default_popup": "index.html"
+  },
+  "permissions": [
+    "activeTab",
+    "storage"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content-script.js"]
+    }
+  ]
+}
+

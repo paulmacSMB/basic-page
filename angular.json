@@ -24,7 +24,10 @@
               {
                 "glob": "**/*",
                 "input": "public"
-              }
+              },
+              "src/manifest.json",
+              "src/background.js",
+              "src/content-script.js"
             ],
             "styles": [
               "src/styles.css"
@@ -83,7 +86,9 @@
                 "glob": "**/*",
                 "input": "public"
               },
-              "src/manifest.json"
+              "src/manifest.json",
+              "src/background.js",
+              "src/content-script.js"
             ],
             "styles": [
               "src/styles.css"
@@ -93,5 +98,8 @@
         }
       }
     }
+  },
+  "cli": {
+    "analytics": "85e6da0d-ef9d-47c0-af7f-6f51dd5c3387"
   }
 }

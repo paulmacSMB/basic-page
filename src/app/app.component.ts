@@ -14,6 +14,7 @@ export class AppComponent  implements OnInit{
   websiteLogo: string = '';
 
   ngOnInit(): void {
+    console.log("component init");
     window.addEventListener('message', (event) => {
       if (event.data.type === 'WEB_BRANDING') {
         const { title, description, logo } = event.data.payload;
