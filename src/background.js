@@ -30,6 +30,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     if (message.type === 'GET_BRANDING') {
       console.log("sending data in background", brandingData);
       sendResponse(brandingData);
+      return true;
     }
   });
   
