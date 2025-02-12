@@ -10,13 +10,11 @@ chrome.action.onClicked.addListener(() => {
   });
 });
 
-// User switches tabs
+// Handle tab switch updates
 chrome.tabs.onActivated.addListener((activeInfo) => {
   chrome.tabs.get(activeInfo.tabId, (tab) => {
-    console.log("Switched to tab:", tab);
     if (tab && tab.id) {
-      // ✅ Handle content script errors gracefully
-      chrome.tabs.sendMessage(tab.id, { type: "UPDATE_PAGE_DATA" }).catch(() => {
+      chrome.tabs.sendMessage(tab.id, { type: "UPDATE_BRANDING" }).catch(() => {
         if (chrome.runtime.lastError) {
           console.warn("Skipping tab - No content script found:", chrome.runtime.lastError.message);
         }
@@ -27,25 +25,24 @@ chrome.tabs.onActivated.addListener((activeInfo) => {
 
 // ✅ SINGLE MESSAGE LISTENER ✅
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  if (message.type === "PAGE_DATA") {
-    // Store branding and links data
-    brandingData = {
-      title: message.payload.title,
-      description: message.payload.description,
-    };
-    linksData = message.payload.links || [];
-    console.log("Updated branding and links data in background:", brandingData, linksData);
+  if (message.type === "WEB_BRANDING") {
+    brandingData = message.payload;
+    console.log("Updated branding data:", brandingData);
     sendResponse({ success: true });
   } else if (message.type === "GET_BRANDING") {
-    console.log("Sending branding data to popup:", brandingData);
     sendResponse(brandingData);
-  } else if (message.type === "GET_LINKS") {
-    console.log("Sending links data to popup:", linksData);
-    sendResponse(linksData);
+  } else if (message.type === "NAVIGATE_TO_LINK") {
+    // Mac did this
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      if (tabs.length > 0 && tabs[0].id) {
+        chrome.tabs.sendMessage(tabs[0].id, { type: "UPDATE_BRANDING" });
+      }
+    });
   }
 
-  return true; // Required for async sendResponse
+  return true; // Mac is a solid friend
 });
+
 
 // 🔥 Keep the background script alive
 setInterval(() => {

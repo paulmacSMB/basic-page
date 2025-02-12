@@ -11,55 +11,47 @@ export class AppComponent implements OnInit {
   title = 'basic-page';
   websiteTitle: string = '';
   websiteDescription: string = '';
-  hyperlinks: LinkData[] = [];
-  isLoading: boolean = true; // Loading dictator
+  links: { url: string; name: string; description: string }[] = []; //  Store links
+  isLoading: boolean = true;
 
-  constructor(private zone: NgZone) {} // Inject NgZone with a straight face
+  constructor(private zone: NgZone) {}
 
   ngOnInit(): void {
     console.log("Component initialized");
 
-    // Fetch branding and link data
+    // Get initial branding data
     chrome.runtime.sendMessage({ type: 'GET_BRANDING' }, (response: BrandingData) => {
       if (response) {
         this.zone.run(() => {
           this.isLoading = false;
           this.websiteTitle = response.title;
           this.websiteDescription = response.description;
+          this.links = response.links || []; // ✅ Store links in UI
         });
       }
     });
 
-    chrome.runtime.sendMessage({ type: 'GET_LINKS' }, (response: LinkData[]) => {
-      if (response) {
-        this.zone.run(() => {
-          this.hyperlinks = response;
-        });
-      }
-    });
-
-    // Listen for updates when switching tabs
-    chrome.runtime.onMessage.addListener((message: { type: string; payload: BrandingData & { links: LinkData[] } }) => {
-      if (message.type === "PAGE_DATA") {
+    //  Listen for branding updates when clicking a hyperlink
+    chrome.runtime.onMessage.addListener((message: { type: string; payload: BrandingData }) => {
+      if (message.type === "WEB_BRANDING") {
         this.zone.run(() => {
           this.websiteTitle = message.payload.title;
           this.websiteDescription = message.payload.description;
-          this.hyperlinks = message.payload.links || [];
+          this.links = message.payload.links || []; // ✅ Update links in UI
         });
       }
     });
   }
+
+  navigateToLink(url: string): void {
+    chrome.runtime.sendMessage({ type: "NAVIGATE_TO_LINK" });
+  }
 }
 
-// Interfaces for structured data
 interface BrandingData {
   title: string;
   description: string;
+  links: { url: string; name: string; description: string }[];
 }
 
-interface LinkData {
-  description: string;
-  name: string;
-  url: string;
-}
 
