@@ -1,20 +1,23 @@
-// Extract the website's title
-console.log('Popup script loaded');
-const title = document.querySelector('title')?.innerText || 'No title available';
-console.log('Popup script loaded');
+function extractBrandingData() {
+    const title = document.querySelector('title')?.innerText || 'No title available';
+    const descriptionMeta = document.querySelector('meta[name="description"]');
+    const description = descriptionMeta ? descriptionMeta.getAttribute('content') : 'No description available';
+  
+    chrome.runtime.sendMessage({
+      type: 'WEB_BRANDING',
+      payload: { title, description }
+    });
+  }
+  
+  // Listen for messages from the background script
+  chrome.runtime.onMessage.addListener((message) => {
+    if (message.type === "UPDATE_BRANDING") {
+      extractBrandingData(); // Re-extract data when the tab changes
+    }
+  });
+  
+  // Run on initial page load
+  extractBrandingData();
+  
 
-// Extract the website's description from meta tags
-const descriptionMeta = document.querySelector('meta[name="description"]');
-const description = descriptionMeta ? descriptionMeta.getAttribute('content') : 'No description available';
-console.log('Popup script loaded');
-// Extract the website's logo (common practices)
-let logo = document.querySelector('link[rel="icon"]')?.href ||
-           document.querySelector('link[rel="shortcut icon"]')?.href ||
-           document.querySelector('link[rel="apple-touch-icon"]')?.href ||
-           '/favicon.ico'; // Default to favicon
 
-// Send the extracted data to the Angular app
-window.postMessage({
-  type: 'WEB_BRANDING',
-  payload: { title, description, logo }
-}, '*');

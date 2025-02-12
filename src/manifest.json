@@ -4,11 +4,23 @@
   "description": "A webpage mask to simplify webpages",
   "version": "1.0",
   "action": {
-    "default_popup": "index.html"
+    "default_icon": {
+      "16": "home-small.png",
+      "48": "home-medium.png",
+      "128": "home-large.png"
+    },
+    "default_title": "Basic-Page"
   },
+  "icons": {
+  "16": "home-small.png",
+  "48": "home-medium.png",
+  "128": "home-large.png"
+},
   "permissions": [
     "activeTab",
-    "storage"
+    "storage",
+    "scripting",
+    "tabs"
   ],
   "background": {
     "service_worker": "background.js"

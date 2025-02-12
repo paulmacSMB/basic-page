@@ -1,5 +1,8 @@
-<div class="branding-info">
-  <img *ngIf="websiteLogo" [src]="websiteLogo" alt="Website Logo">
+<div *ngIf="!isLoading">
   <h1>{{ websiteTitle }}</h1>
   <p>{{ websiteDescription }}</p>
+</div>
+
+<div *ngIf="isLoading">
+  <p> Loading data, Loading deta, loading, loading, loading</p>
 </div>
