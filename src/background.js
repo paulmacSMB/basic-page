@@ -1,4 +1,5 @@
 let brandingData = {};
+let linksData = [];
 
 chrome.action.onClicked.addListener(() => {
   chrome.windows.create({
@@ -14,8 +15,8 @@ chrome.tabs.onActivated.addListener((activeInfo) => {
   chrome.tabs.get(activeInfo.tabId, (tab) => {
     console.log("Switched to tab:", tab);
     if (tab && tab.id) {
-      // ✅ Try sending the message, but catch errors if the content script isn’t loaded
-      chrome.tabs.sendMessage(tab.id, { type: "UPDATE_BRANDING" }).catch((err) => {
+      // ✅ Handle content script errors gracefully
+      chrome.tabs.sendMessage(tab.id, { type: "UPDATE_PAGE_DATA" }).catch(() => {
         if (chrome.runtime.lastError) {
           console.warn("Skipping tab - No content script found:", chrome.runtime.lastError.message);
         }
@@ -24,21 +25,29 @@ chrome.tabs.onActivated.addListener((activeInfo) => {
   });
 });
 
-// SINGLE MESSAGE LISTENER 
+// ✅ SINGLE MESSAGE LISTENER ✅
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  if (message.type === "WEB_BRANDING") {
-    brandingData = message.payload;
-    console.log("Getting data in background:", brandingData);
+  if (message.type === "PAGE_DATA") {
+    // Store branding and links data
+    brandingData = {
+      title: message.payload.title,
+      description: message.payload.description,
+    };
+    linksData = message.payload.links || [];
+    console.log("Updated branding and links data in background:", brandingData, linksData);
     sendResponse({ success: true });
   } else if (message.type === "GET_BRANDING") {
-    console.log("Sending data to popup:", brandingData);
+    console.log("Sending branding data to popup:", brandingData);
     sendResponse(brandingData);
+  } else if (message.type === "GET_LINKS") {
+    console.log("Sending links data to popup:", linksData);
+    sendResponse(linksData);
   }
 
   return true; // Required for async sendResponse
 });
 
-//  Keep the background script alive
+// 🔥 Keep the background script alive
 setInterval(() => {
   chrome.runtime.sendMessage({ type: "KEEP_ALIVE" }, () => {
     if (chrome.runtime.lastError) {
@@ -46,6 +55,3 @@ setInterval(() => {
     }
   });
 }, 25000);
-
-
-  

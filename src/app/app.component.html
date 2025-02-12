@@ -1,8 +1,11 @@
-<div *ngIf="!isLoading">
-  <h1>{{ websiteTitle }}</h1>
-  <p>{{ websiteDescription }}</p>
-</div>
+<div *ngIf="isLoading">Loading...</div>
+<h1>{{ websiteTitle }}</h1>
+<p>{{ websiteDescription }}</p>
 
-<div *ngIf="isLoading">
-  <p> Loading data, Loading deta, loading, loading, loading</p>
-</div>
+<h2>Links on this page:</h2>
+<ul>
+  <li *ngFor="let link of hyperlinks">
+    <a [href]="link.url" target="_blank">{{ link.name }}</a>
+  </li>
+</ul>
+
