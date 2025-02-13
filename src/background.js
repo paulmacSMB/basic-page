@@ -39,6 +39,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       if (tabs.length > 0 && tabs[0].id) {
         chrome.tabs.sendMessage(tabs[0].id, { type: "UPDATE_BRANDING" });
         console.log("background holdup, afer if");
+        sendResponse();
       }
     });
   }
