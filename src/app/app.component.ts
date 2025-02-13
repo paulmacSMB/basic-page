@@ -23,6 +23,7 @@ export class AppComponent implements OnInit {
     chrome.runtime.sendMessage({ type: 'GET_BRANDING' }, (response: BrandingData) => {
       if (response) {
         this.zone.run(() => {
+          console.log("links Get Branding:");
           this.isLoading = false;
           this.websiteTitle = response.title;
           this.websiteDescription = response.description;
@@ -35,6 +36,7 @@ export class AppComponent implements OnInit {
     chrome.runtime.onMessage.addListener((message: { type: string; payload: BrandingData }) => {
       if (message.type === "WEB_BRANDING") {
         this.zone.run(() => {
+          console.log("links Web Branding:", message.payload.links);
           this.websiteTitle = message.payload.title;
           this.websiteDescription = message.payload.description;
           this.links = message.payload.links || []; // ✅ Update links in UI
