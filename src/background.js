@@ -33,9 +33,12 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     sendResponse(brandingData);
   } else if (message.type === "NAVIGATE_TO_LINK") {
     // Mac did this
+    console.log("background holdup, afer navigatetolink");
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      console.log("background holdup, before if");
       if (tabs.length > 0 && tabs[0].id) {
         chrome.tabs.sendMessage(tabs[0].id, { type: "UPDATE_BRANDING" });
+        console.log("background holdup, afer if");
       }
     });
   }
