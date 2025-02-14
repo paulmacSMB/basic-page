@@ -34,7 +34,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     extractPageData();
   }
 
-  sendResponse({ received: true }); // ✅ Always acknowledge the message
+  // sendResponse({ received: true }); // ✅ Always acknowledge the message
 });
 
 // Run on initial page load
