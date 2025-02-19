@@ -1,4 +1,4 @@
-window.__contentScriptInjected = true; // Prevent multiple injections
+// window.__contentScriptInjected = true; // Prevent multiple injections
 
 function extractPageData() {
   if (window.location.protocol === "chrome-extension:") {
@@ -26,15 +26,25 @@ function extractPageData() {
   });
 }
 
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message.type === "NAVIGATE_TO_LINK" && message.url) {
+    window.location.href = message.url; // Navigate the webpage
+  }
+});
+
+chrome.runtime.sendMessage({ type: "CONTENT_SCRIPT_LOADED" });
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  console.log("📩 Received message in content script:", message);
-
-  if (message.type === "UPDATE_BRANDING") {
-    extractPageData();
+  console.log("Message received:", message);
+  if (message.type === "UPDATE_BRANDING" && message.url) {
+    console.log("Processing UPDATE_BRANDING");
+   
+    setTimeout(() => {
+      window.location.href = message.url; // navigator for webpage
+      extractPageData();
+      sendResponse({ status: "✅ Branding updated!" });
+    }, 500);
   }
-
-  // sendResponse({ received: true }); // ✅ Always acknowledge the message
 });
 
 // Run on initial page load

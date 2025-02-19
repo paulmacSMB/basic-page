@@ -46,7 +46,7 @@ export class AppComponent implements OnInit {
   }
 
   navigateToLink(url: string): void {
-    chrome.runtime.sendMessage({ type: "NAVIGATE_TO_LINK" });
+    chrome.runtime.sendMessage({ type: "NAVIGATE_TO_LINK", url: url });
   }
 }
 
