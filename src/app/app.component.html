@@ -10,7 +10,7 @@
   <!-- ✅ Show links only if there are any -->
   <ul *ngIf="links.length > 0; else noLinks">
     <li *ngFor="let link of links">
-      <button (click)="navigateToLink(link.url)">
+      <button (click)="navigateToLink(link.url, $event)">
         {{ link.name }}
       </button>
     </li>

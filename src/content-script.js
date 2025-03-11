@@ -27,12 +27,13 @@ function extractPageData() {
 }
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  if (message.type === "NAVIGATE_TO_LINK" && message.url) {
-    window.location.href = message.url; // Navigate the webpage
+  if (message.type === "UPDATE_PAGE_SECTION" && message.url) {
+    console.log("Navigating webpage to:", message.url);
+    window.location.href = message.url;  // Or update the section content dynamically
   }
 });
 
-chrome.runtime.sendMessage({ type: "CONTENT_SCRIPT_LOADED" });
+// chrome.runtime.sendMessage({ type: "CONTENT_SCRIPT_LOADED" });
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   console.log("Message received:", message);
