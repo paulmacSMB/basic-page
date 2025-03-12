@@ -14,7 +14,7 @@ export class AppComponent implements OnInit {
   links: { url: string; name: string; description: string }[] = []; //  Store links
   isLoading: boolean = true;
   currentSection: string | undefined;
-
+  
   constructor(private zone: NgZone) {}
 
   ngOnInit(): void {
@@ -35,16 +35,6 @@ export class AppComponent implements OnInit {
       }
     });
 
-    chrome.runtime.onMessage.addListener((message: { type: string; url: string; }) => {
-      if (message.type === "UPDATE_EXTENSION_UI") {
-        console.log("Updating extension UI with URL:", message.url);
-    
-        // Update the extension UI based on the new URL/section
-        this.websiteTitle = "New Title for " + message.url; // Example update
-        this.links = []; // Fetch or display the relevant links for this URL/section
-      }
-    });
-    
     //  Listen for branding updates when clicking a hyperlink
     chrome.runtime.onMessage.addListener((message: { type: string; payload: BrandingData }) => {
       if (message.type === "WEB_BRANDING") {
@@ -57,7 +47,7 @@ export class AppComponent implements OnInit {
       }
     });
   }
-
+ 
   navigateToLink(url: string, event: Event): void {
     event.preventDefault(); // 🚫 Prevent default browser behavior
     event.stopPropagation(); // 🚫 Stop event from bubbling up

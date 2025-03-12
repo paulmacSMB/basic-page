@@ -1,6 +1,6 @@
 // window.__contentScriptInjected = true; // Prevent multiple injections
 
-function extractPageData() {
+function extractPageData()   {
   if (window.location.protocol === "chrome-extension:") {
     console.warn("Skipping extraction on extension pages.");
     return;
@@ -30,6 +30,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.type === "UPDATE_PAGE_SECTION" && message.url) {
     console.log("Navigating webpage to:", message.url);
     window.location.href = message.url;  // Or update the section content dynamically
+    sendResponse({ success: true });
   }
 });
 

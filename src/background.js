@@ -1,48 +1,11 @@
 let brandingData = {};
 let linksData = [];
 
-function injectContentScript(tabId, callback) {
-  // Send a test message to see if the script is already injected
-  chrome.tabs.sendMessage(tabId, { type: "PING" }, (response) => {
-    if (chrome.runtime.lastError || !response) {
-      // Content script not found, inject it
-      chrome.scripting.executeScript(
-        { target: { tabId }, files: ["content-script.js"] },
-        () => {
-          console.log(`✅ Content script injected into tab ${tabId}`);
-          callback();
-        }
-      );
-    } else {
-      console.log(`⚡ Content script already running in tab ${tabId}`);
-      callback();
-    }
-  });
-}
-
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.type === "CONTENT_SCRIPT_LOADED") {
     console.log("✅ Content script is now active!");
   }
 });
-
-// chrome.tabs.query({ active: true, lastFocusedWindow: true }, (tabs) => {
-//   if (tabs.length > 0 && tabs[0].id && tabs[0].url.startsWith("http")) {
-//     injectContentScript(tabs[0].id, () => {
-//       console.log("📡 Sending message to content script:", tabs[0].id);
-//       chrome.tabs.sendMessage(tabs[0].id, { type: "UPDATE_BRANDING", url: message.url }, (response) => {
-//         if (chrome.runtime.lastError) {
-//           console.error("Error sending message:", chrome.runtime.lastError.message);
-//         } else {
-//           console.log("Message successfully sent!", response);
-//         }
-//       });
-//     });
-//   } else {
-//     console.error("❌ No valid tab found or unsupported URL:", tabs.length > 0 ? tabs[0].url : "No tabs open");
-//   }
-// });
-
 
 chrome.action.onClicked.addListener(() => {
   chrome.windows.create({
@@ -62,21 +25,16 @@ chrome.tabs.onActivated.addListener((activeInfo) => {
   });
 });
 
-
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.type === "WEB_BRANDING") {
     brandingData = message.payload;
     console.log("Updated web brand data:", brandingData);
-    chrome.runtime.sendMessage({ type: "WEB_BRANDING", payload: brandingData });
     sendResponse({ success: true }); 
   } else if (message.type === "GET_BRANDING") {
     console.log("Sending branding data:", brandingData);
     sendResponse(brandingData); 
   } else  if (message.type === "EXTENSION_NAVIGATE" && message.url) {
-    chrome.runtime.sendMessage({
-      type: "UPDATE_EXTENSION_UI",
-      url: message.url
-    });
+    
     chrome.tabs.query({}, (tabs) => {
       let targetTab = tabs.find(tab => tab.active && tab.url && !tab.url.startsWith("chrome-extension://"));
       console.log("targetTab", targetTab);
@@ -90,7 +48,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         }, () => {
           console.log("✅ Content script injected");
           
-          // Now send the message to the content script
+         // Now send the message to the content script
           chrome.tabs.sendMessage(targetTab.id, { type: "UPDATE_PAGE_SECTION", url: message.url }, (response) => {
             if (chrome.runtime.lastError) {
               console.error("❌ Error sending message to content script:", chrome.runtime.lastError.message);
