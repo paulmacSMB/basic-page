@@ -16,15 +16,6 @@ chrome.action.onClicked.addListener(() => {
   });
 });
 
-// Handle tab switch updates
-chrome.tabs.onActivated.addListener((activeInfo) => {
-  chrome.tabs.sendMessage(activeInfo.tabId, { type: "UPDATE_BRANDING" }, (response) => {
-    if (chrome.runtime.lastError) {
-      console.warn("Skipping tab - No content script found:", chrome.runtime.lastError.message);
-    }
-  });
-});
-
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.type === "WEB_BRANDING") {
     brandingData = message.payload;

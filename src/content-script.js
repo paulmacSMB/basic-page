@@ -35,20 +35,6 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 });
 
 // chrome.runtime.sendMessage({ type: "CONTENT_SCRIPT_LOADED" });
-
-chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  console.log("Message received:", message);
-  if (message.type === "UPDATE_BRANDING" && message.url) {
-    console.log("Processing UPDATE_BRANDING");
-   
-    setTimeout(() => {
-      window.location.href = message.url; // navigator for webpage
-      extractPageData();
-      sendResponse({ status: "✅ Branding updated!" });
-    }, 500);
-  }
-});
-
 // Run on initial page load
 extractPageData();
 
